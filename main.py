@@ -5,13 +5,16 @@ LastEditTime: 2021-07-01 14:12:15
 LastEditors: Please set LastEditors
 Description: In User Settings Edit
 '''
+from cnocr import CnOcr
 
 from detection_choice_question import get_answer_card_cnts, get_sub_answer_card_cnts, detection_choice_question
 from detection_exam_num import detection_exam_num
 from settings import TITLE_NUM
 from utils import get_init_process_img, capture_img, ocr_single_line_img
-from cnocr import CnOcr
+import os
 
+if not os.path.exists('out'):
+    os.makedirs('out')
 
 def demo(origin_image_path):
     # 获取答题卡左右区域
@@ -43,23 +46,6 @@ def demo(origin_image_path):
                 sub_answer_cnt_szie = sub_answer_cnt_szie + 1
     print('试题切分结果：', sub_answer_card_images_path)
 
-    # 获取每个大标题的索引
-    ocr = CnOcr()
-    title_index = []
-    for img in sub_answer_card_images_path:
-        res = ocr_single_line_img(img, ocr)
-        if len(res) > 0 and res[0] in TITLE_NUM:
-            title_index.append(sub_answer_card_images_path.index(img))
-    print('每道大题的起始图片索引: ', title_index)
-    
-    # 学生考号自动识别
-    num_card = detection_exam_num(sub_answer_card_images_path[0])
-    print('学生考号: ', num_card)
-
-    # 选择题自动识别与批改
-    question_answer_dict = detection_choice_question(sub_answer_card_images_path, ocr)
-    print('每道选择题答案（key 题序, value: 对应题序的答案列表）：', question_answer_dict)
-    
 
 if __name__ == '__main__':
-    demo('pic/answer_card1.jpg')
+    demo('pic/1.png')
